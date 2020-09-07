@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Exception\MayTriggerException;
 use App\Manager\UserManager;
 use Twig\Environment as TwigEnvironment;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,9 +32,15 @@ class UserController extends AbstractController
      */
     private $userManager;
 
-    public function __construct(UserManager $userManager)
+    /**
+     * @var MayTriggerException
+     */
+    private $mayTriggerException;
+
+    public function __construct(UserManager $userManager, MayTriggerException $mayTriggerException)
     {
         $this->userManager = $userManager;
+        $this->mayTriggerException = $mayTriggerException;
     }
 
     /**
@@ -50,6 +57,8 @@ class UserController extends AbstractController
     public function create(Request $request, TwigEnvironment $templating, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
     {
         try {
+
+            $this->mayTriggerException->randomExceptionTrigger($request);
 
             $user = $serializerInterface->deserialize($request->getContent(), User::class, 'json');
             
@@ -71,16 +80,19 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{userId}", name="read", methods={"GET"})
+     * @Route("/{userId}", name="read", methods={"GET"}, requirements={"userId"="\d+"})
      * 
      * @IsGranted("ROLE_USER")
      * 
      * @param int $userId
+     * @param Request $request
      * @return json
      * @throws NotFoundHttpException
      */
-    public function read($userId)
+    public function read($userId, Request $request)
     {
+        $this->mayTriggerException->randomExceptionTrigger($request);
+
         $user = $this->userManager->find($userId);
 
         if (!$user) {
@@ -91,7 +103,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{userId}", name="update", methods={"PUT"})
+     * @Route("/{userId}", name="update", methods={"PUT"}, requirements={"userId"="\d+"})
      * 
      * @IsGranted("ROLE_ADMIN")
      * 
@@ -105,6 +117,8 @@ class UserController extends AbstractController
     public function update($userId, Request $request, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
     {
         try {
+
+            $this->mayTriggerException->randomExceptionTrigger($request);
 
             $currentUser = $this->userManager->find($userId);
             if (!$currentUser) {
@@ -129,16 +143,19 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/{userId}", name="delete", methods={"DELETE"})
+     * @Route("/{userId}", name="delete", methods={"DELETE"}, requirements={"userId"="\d+"})
      * 
      * @IsGranted("ROLE_ADMIN")
      * 
      * @param int $userId
+     * @param Request $request
      * @return json
      * @throws NotFoundHttpException
      */
-    public function delete($userId)
+    public function delete($userId, Request $request)
     {
+        $this->mayTriggerException->randomExceptionTrigger($request);
+
         $user = $this->userManager->find($userId);
         if (!$user) {
             throw new NotFoundHttpException('User not found');

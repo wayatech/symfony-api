@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Customer;
+use App\Exception\MayTriggerException;
 use App\Manager\CustomerManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,9 +31,15 @@ class CustomerController extends AbstractController
      */
     private $customerManager;
 
-    public function __construct(CustomerManager $customerManager)
+    /**
+     * @var MayTriggerException
+     */
+    private $mayTriggerException;
+
+    public function __construct(CustomerManager $customerManager, MayTriggerException $mayTriggerException)
     {
         $this->customerManager = $customerManager;
+        $this->mayTriggerException = $mayTriggerException;
     }
 
     /**
@@ -48,6 +55,8 @@ class CustomerController extends AbstractController
     public function create(Request $request, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
     {
         try {
+
+            $this->mayTriggerException->randomExceptionTrigger($request);
 
             $customer = $serializerInterface->deserialize($request->getContent(), Customer::class, 'json');
             
@@ -67,16 +76,19 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/{customerId}", name="read", methods={"GET"})
+     * @Route("/{customerId}", name="read", methods={"GET"}, requirements={"customerId"="\d+"})
      * 
      * @IsGranted("ROLE_USER")
      * 
      * @param int $customerId
+     * @param Request $request
      * @return json
      * @throws NotFoundHttpException
      */
-    public function read($customerId)
+    public function read($customerId, Request $request)
     {
+        $this->mayTriggerException->randomExceptionTrigger($request);
+
         $customer = $this->customerManager->find($customerId);
 
         if (!$customer) {
@@ -87,7 +99,7 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/{customerId}", name="update", methods={"PUT"})
+     * @Route("/{customerId}", name="update", methods={"PUT"}, requirements={"customerId"="\d+"})
      * 
      * @IsGranted("ROLE_USER")
      * 
@@ -101,6 +113,8 @@ class CustomerController extends AbstractController
     public function update($customerId, Request $request, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
     {
         try {
+
+            $this->mayTriggerException->randomExceptionTrigger($request);
 
             $currentCustomer = $this->customerManager->find($customerId);
             if (!$currentCustomer) {
@@ -125,16 +139,19 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route("/{customerId}", name="delete", methods={"DELETE"})
+     * @Route("/{customerId}", name="delete", methods={"DELETE"}, requirements={"customerId"="\d+"})
      * 
      * @IsGranted("ROLE_USER")
      * 
      * @param int $customerId
+     * @param Request $request
      * @return json
      * @throws NotFoundHttpException
      */
-    public function delete($customerId)
+    public function delete($customerId, Request $request)
     {
+        $this->mayTriggerException->randomExceptionTrigger($request);
+
         $customer = $this->customerManager->find($customerId);
         if (!$customer) {
             throw new NotFoundHttpException('Customer not found');

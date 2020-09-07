@@ -10,6 +10,10 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Twig\Environment as TwigEnvironment;
 
+/**
+ * @method void configure()
+ * @method void execute(InputInterface $input, OutputInterface $output)
+ */
 class CreateAdminCommand extends Command
 {
     /**
