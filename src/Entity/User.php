@@ -2,11 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
+ * @UniqueEntity("email")
+ * 
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface
@@ -15,6 +20,8 @@ class User implements UserInterface
     const ROLE_ADMIN = "ROLE_ADMIN";
 
     /**
+     * @Groups({"user:read"})
+     * 
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -22,11 +29,18 @@ class User implements UserInterface
     private $id;
 
     /**
+     * @Groups({"user:read"})
+     * 
+     * @Assert\Email
+     * @Assert\NotBlank
+     * 
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
 
     /**
+     * @Groups({"user:read"})
+     * 
      * @ORM\Column(type="json")
      */
     private $roles = [];
@@ -45,11 +59,15 @@ class User implements UserInterface
     private $plainPassword;
 
     /**
+     * @Groups({"user:read"})
+     * 
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $firstname;
 
     /**
+     * @Groups({"user:read"})
+     * 
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $lastname;

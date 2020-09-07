@@ -3,8 +3,8 @@
 namespace App\Manager;
 
 use App\Entity\User;
-use Symfony\Component\Mime\Email;
 use App\Repository\UserRepository;
+use Symfony\Component\Mime\Email;
 use Doctrine\ORM\EntityManagerInterface;
 use Twig\Environment as TwigEnvironment;
 use Symfony\Component\Mailer\MailerInterface;
@@ -13,20 +13,47 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserManager
 {
     private $em;
-    private $repository;
+    private $userRepository;
     private $encoder;
     private $mailer;
 
     public function __construct(
         EntityManagerInterface $em,
-        UserRepository $repository,
+        UserRepository $userRepository,
         UserPasswordEncoderInterface $encoder,
         MailerInterface $mailer
     ) {
         $this->em = $em;
-        $this->repository = $repository;
+        $this->userRepository = $userRepository;
         $this->encoder = $encoder;
         $this->mailer = $mailer;
+    }
+
+    /**
+     * @param int $userId
+     * @return User
+     */
+    public function find($userId)
+    {
+        return $this->userRepository->find($userId);
+    }
+
+    /**
+     * @param User $user
+     */
+    public function save(User $user)
+    {
+        $this->em->persist($user);
+        $this->em->flush();
+    }
+
+    /**
+     * @param User $user
+     */
+    public function delete(User $user)
+    {
+        $this->em->remove($user);
+        $this->em->flush();
     }
 
     /**
