@@ -10,23 +10,46 @@ use Twig\Environment as TwigEnvironment;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
+/**
+ * @method User|null find($id)
+ * @method void      save(User $user)
+ * @method void      delete(User $user)
+ * @method User      createAdminFromCommand(TwigEnvironment $templatingEngine, string $email)
+ * @method string    generatePassword(User $user)
+ * @method void      sendCreationEmail(TwigEnvironment $templatingEngine, User $user, string $password)
+ */
 class UserManager
 {
-    private $em;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManagerInterface;
+
+    /**
+     * @var UserRepository
+     */
     private $userRepository;
-    private $encoder;
-    private $mailer;
+
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $userPasswordEncoderInterface;
+
+    /**
+     * @var MailerInterface
+     */
+    private $mailerInterface;
 
     public function __construct(
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManagerInterface,
         UserRepository $userRepository,
-        UserPasswordEncoderInterface $encoder,
-        MailerInterface $mailer
+        UserPasswordEncoderInterface $userPasswordEncoderInterface,
+        MailerInterface $mailerInterface
     ) {
-        $this->em = $em;
+        $this->entityManagerInterface = $entityManagerInterface;
         $this->userRepository = $userRepository;
-        $this->encoder = $encoder;
-        $this->mailer = $mailer;
+        $this->userPasswordEncoderInterface = $userPasswordEncoderInterface;
+        $this->mailerInterface = $mailerInterface;
     }
 
     /**
@@ -40,20 +63,22 @@ class UserManager
 
     /**
      * @param User $user
+     * @return void
      */
     public function save(User $user)
     {
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->entityManagerInterface->persist($user);
+        $this->entityManagerInterface->flush();
     }
 
     /**
      * @param User $user
+     * @return void
      */
     public function delete(User $user)
     {
-        $this->em->remove($user);
-        $this->em->flush();
+        $this->entityManagerInterface->remove($user);
+        $this->entityManagerInterface->flush();
     }
 
     /**
@@ -83,8 +108,8 @@ class UserManager
     public function generatePassword(User $user)
     {
         $password = md5(random_bytes(10));
-        $encoded = $this->encoder->encodePassword($user, $password);
-        $user->setPassword($encoded);
+        $encodedPassword = $this->userPasswordEncoderInterface->encodePassword($user, $password);
+        $user->setPassword($encodedPassword);
 
         return $password;
     }
@@ -120,6 +145,6 @@ class UserManager
                 ]
             ));
 
-        $this->mailer->send($email);
+        $this->mailerInterface->send($email);
     }
 }

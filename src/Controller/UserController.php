@@ -18,9 +18,17 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 /**
  * @Route("/api/users", name="users_")
+ * 
+ * @method json create(Request $request, TwigEnvironment $templating, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
+ * @method json read(int $userId)
+ * @method json update(int $userId, Request $request, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
+ * @method json delete(int $userId)
  */
 class UserController extends AbstractController
 {
+    /**
+     * @var UserManager
+     */
     private $userManager;
 
     public function __construct(UserManager $userManager)
