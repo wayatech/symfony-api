@@ -18,7 +18,8 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 /**
  * @Route("/api/customers", name="customers_")
- * 
+ *
+ * @method json list()
  * @method json create(Request $request, TwigEnvironment $templating, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
  * @method json read(int $customerId)
  * @method json update(int $customerId, Request $request, SerializerInterface $serializerInterface, ValidatorInterface $validatorInterface)
@@ -43,10 +44,28 @@ class CustomerController extends AbstractController
     }
 
     /**
-     * @Route(name="create", methods={"POST"})
-     * 
+     * @Route("", name="list", methods={"GET"})
+     *
      * @IsGranted("ROLE_USER")
-     * 
+     *
+     * @param Request $request
+     * @return json
+     * @throws NotFoundHttpException
+     */
+    public function list(Request $request)
+    {
+        $this->mayTriggerException->randomExceptionTrigger($request);
+
+        $customers = $this->customerManager->list();
+
+        return $this->json($customers, Response::HTTP_OK, [], ['groups' => 'customer:read']);
+    }
+
+    /**
+     * @Route(name="create", methods={"POST"})
+     *
+     * @IsGranted("ROLE_USER")
+     *
      *  @param Request $request
       * @param SerializerInterface $serializerInterface
       * @param ValidatorInterface $validatorInterface
@@ -59,7 +78,7 @@ class CustomerController extends AbstractController
             $this->mayTriggerException->randomExceptionTrigger($request);
 
             $customer = $serializerInterface->deserialize($request->getContent(), Customer::class, 'json');
-            
+
             $errors = $validatorInterface->validate($customer);
             if (count($errors) > 0) {
                 return $this->json($errors, Response::HTTP_BAD_REQUEST);
@@ -77,9 +96,9 @@ class CustomerController extends AbstractController
 
     /**
      * @Route("/{customerId}", name="read", methods={"GET"}, requirements={"customerId"="\d+"})
-     * 
+     *
      * @IsGranted("ROLE_USER")
-     * 
+     *
      * @param int $customerId
      * @param Request $request
      * @return json
@@ -100,9 +119,9 @@ class CustomerController extends AbstractController
 
     /**
      * @Route("/{customerId}", name="update", methods={"PUT"}, requirements={"customerId"="\d+"})
-     * 
+     *
      * @IsGranted("ROLE_USER")
-     * 
+     *
      * @param int $customerId
      * @param Request $request
      * @param SerializerInterface $serializerInterface
@@ -129,7 +148,7 @@ class CustomerController extends AbstractController
             }
 
             $this->customerManager->save($customer);
-                
+
             return $this->json($customer, Response::HTTP_OK, [], ['groups' => 'customer:read']);
 
         } catch (NotEncodableValueException $e) {
@@ -140,9 +159,9 @@ class CustomerController extends AbstractController
 
     /**
      * @Route("/{customerId}", name="delete", methods={"DELETE"}, requirements={"customerId"="\d+"})
-     * 
+     *
      * @IsGranted("ROLE_USER")
-     * 
+     *
      * @param int $customerId
      * @param Request $request
      * @return json
@@ -156,9 +175,9 @@ class CustomerController extends AbstractController
         if (!$customer) {
             throw new NotFoundHttpException('Customer not found');
         }
-        
+
         $this->customerManager->delete($customer);
-        
+
         return $this->json('', Response::HTTP_OK);
     }
 }

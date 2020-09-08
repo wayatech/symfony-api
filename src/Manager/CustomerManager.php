@@ -32,6 +32,14 @@ class CustomerManager
     }
 
     /**
+     * @return Customer[]
+     */
+    public function list()
+    {
+        return $this->customerRepository->findAll();
+    }
+
+    /**
      * @param int $customerId
      * @return Customer
      */
