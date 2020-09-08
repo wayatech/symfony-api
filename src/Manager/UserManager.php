@@ -82,6 +82,7 @@ class UserManager
     }
 
     /**
+     * @param TwigEnvironment $templatingEngine
      * @param string $email
      * @return User
      */
@@ -93,8 +94,8 @@ class UserManager
 
         $password = $this->generatePassword($user);
 
-        $this->em->persist($user);
-        $this->em->flush();
+        $this->entityManagerInterface->persist($user);
+        $this->entityManagerInterface->flush();
 
         $this->sendCreationEmail($templatingEngine, $user, $password);
 
@@ -127,7 +128,6 @@ class UserManager
             ->priority(Email::PRIORITY_HIGH)
             ->subject('Creation of your account')
             ->text($templatingEngine->render(
-                // templates/emails/userRegistration.txt.twig
                 'emails/userRegistration.txt.twig',
                 [
                     'email' => $user->getEmail(),
@@ -136,7 +136,6 @@ class UserManager
                 ]
             ))
             ->html($templatingEngine->render(
-                // templates/emails/userRegistration.html.twig
                 'emails/userRegistration.html.twig',
                 [
                     'email' => $user->getEmail(),
