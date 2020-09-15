@@ -24,6 +24,8 @@
       "ext-json": "*"
     },
     "require-dev": {
+        "deployer/deployer": "^6.8",
+        "deployer/recipes": "^6.2",
         "symfony/maker-bundle": "^1.21"
     },
     "config": {
