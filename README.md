@@ -18,6 +18,11 @@
 * users_update       PUT      /api/users/{userId}
 * users_delete       DELETE   /api/users/{userId}
 ---
+## Deploy
+Have a look at `./deploy.php`
+
+Define `$_ENV` variables in file `./env.local`
+
 ## Technologies
 - PHP
 - Symfony
