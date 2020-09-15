@@ -127,7 +127,7 @@
         "version": "2.8.0"
     },
     "php": {
-        "version": "7.4"
+        "version": "7.3"
     },
     "phpdocumentor/reflection-common": {
         "version": "2.2.0"
@@ -162,7 +162,7 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         },
         "files": [
-            "./config/packages/sensio_framework_extra.yaml"
+            "config/packages/sensio_framework_extra.yaml"
         ]
     },
     "symfony/cache": {
@@ -259,7 +259,7 @@
             "ref": "15658c2a0176cda2e7dba66276a2030b52bd81b2"
         },
         "files": [
-            "./config/packages/mailer.yaml"
+            "config/packages/mailer.yaml"
         ]
     },
     "symfony/maker-bundle": {
@@ -357,9 +357,6 @@
     "symfony/string": {
         "version": "v5.1.5"
     },
-    "symfony/templating": {
-        "version": "v5.1.5"
-    },
     "symfony/translation-contracts": {
         "version": "v2.1.3"
     },
@@ -389,8 +386,8 @@
             "ref": "d902da3e4952f18d3bf05aab29512eb61cabd869"
         },
         "files": [
-            "./config/packages/test/validator.yaml",
-            "./config/packages/validator.yaml"
+            "config/packages/test/validator.yaml",
+            "config/packages/validator.yaml"
         ]
     },
     "symfony/var-dumper": {
@@ -407,9 +404,6 @@
     },
     "twig/twig": {
         "version": "v2.13.1"
-    },
-    "webimpress/safe-writer": {
-        "version": "2.1.0"
     },
     "webmozart/assert": {
         "version": "1.9.1"
